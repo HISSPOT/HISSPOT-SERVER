@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  password       String?
+  nickname       String
+  profileImg     String?
+  provider       String         @default("local")
+  providerId     String?
+  refreshToken   String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  collections    Collection[]
+  routeHistories RouteHistory[]
+}
+
+model King {
+  id           Int          @id @default(autoincrement())
+  name         String
+  orderNum     Int          @unique
+  era          String
+  description  String       @db.Text
+  imageUrl     String?
+  cardImageUrl String?
+  spots        Spot[]
+  collections  Collection[]
+}
+
+model Spot {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String      @db.Text
+  latitude    Float
+  longitude   Float
+  address     String?
+  imageUrl    String?
+  kingId      Int
+  king        King        @relation(fields: [kingId], references: [id])
+  routeSpots  RouteSpot[]
+  createdAt   DateTime    @default(now())
+}
+
+model Collection {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  kingId      Int
+  collectedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  king        King     @relation(fields: [kingId], references: [id])
+
+  @@unique([userId, kingId])
+}
+
+model Route {
+  id             Int            @id @default(autoincrement())
+  name           String
+  description    String         @db.Text
+  imageUrl       String?
+  distance       Float?
+  duration       Int?
+  routeSpots     RouteSpot[]
+  routeHistories RouteHistory[]
+  createdAt      DateTime       @default(now())
+}
+
+model RouteSpot {
+  id      Int   @id @default(autoincrement())
+  routeId Int
+  spotId  Int
+  order   Int
+  route   Route @relation(fields: [routeId], references: [id])
+  spot    Spot  @relation(fields: [spotId], references: [id])
+
+  @@unique([routeId, spotId])
+}
+
+model RouteHistory {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  routeId     Int
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  route       Route    @relation(fields: [routeId], references: [id])
+}
