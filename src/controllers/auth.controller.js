@@ -1,37 +1,41 @@
-import { signUpService, signInService, reissueTokenService, signOutService } from '../services/auth.service.js';
+import { kakaoLoginService, logoutService } from '../services/auth.service.js';
 
-export const signUp = async (req, res, next) => {
+export const kakaoLogin = async (req, res, next) => {
   try {
-    const result = await signUpService(req.body);
-    res.status(201).json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const signIn = async (req, res, next) => {
-  try {
-    const result = await signInService(req.body);
+    const { kakaoAccessToken } = req.body;
+    const result = await kakaoLoginService(kakaoAccessToken);
     res.status(200).json({ success: true, data: result });
   } catch (err) {
     next(err);
   }
 };
 
-export const reissueToken = async (req, res, next) => {
+export const logout = async (req, res, next) => {
   try {
-    const { refreshToken } = req.body;
-    const result = await reissueTokenService(refreshToken);
-    res.status(200).json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const signOut = async (req, res, next) => {
-  try {
-    await signOutService(req.user.id);
+    await logoutService(req.user.id);
     res.status(200).json({ success: true, message: '로그아웃 되었습니다.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+import jwt from 'jsonwebtoken';
+import { findUserById, createUser } from '../repositories/user.repository.js';
+
+export const devLogin = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+    let user = await findUserById(userId);
+    if (!user) {
+      user = await createUser({
+        id: userId,
+        kakaoId: `dev_${userId}`,
+        nickname: `dev_user_${userId.slice(-4)}`,
+        isOnboarded: true,
+      });
+    }
+    const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    res.status(200).json({ success: true, data: { accessToken, isOnboarded: user.isOnboarded } });
   } catch (err) {
     next(err);
   }

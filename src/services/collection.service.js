@@ -1,9 +1,5 @@
-import { findCollectionsByUserId, createCollection, findCollectionByUserAndKing } from '../repositories/collection.repository.js';
+import { findCollectionByUserAndKing, createCollection } from '../repositories/collection.repository.js';
 import { findKingById } from '../repositories/king.repository.js';
-
-export const getMyCollectionsService = async (userId) => {
-  return await findCollectionsByUserId(userId);
-};
 
 export const collectKingService = async (userId, kingId) => {
   const king = await findKingById(kingId);

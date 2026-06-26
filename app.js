@@ -2,7 +2,9 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import swaggerUi from 'swagger-ui-express';
 import router from './src/routes/index.js';
+import { swaggerSpec } from './src/config/swagger.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +14,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api', router);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1', router);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -24,6 +27,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`Hisspot server running on port ${PORT}`);
+  console.log(`Swagger docs: http://localhost:${PORT}/api-docs`);
 });
 
 export default app;

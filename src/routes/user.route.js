@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import { getMyProfile, updateMyProfile, deleteMyAccount } from '../controllers/user.controller.js';
+import { checkNickname, onboarding, getMyProfile, updateMyProfile } from '../controllers/user.controller.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.use(authenticateToken);
-
-router.get('/me', getMyProfile);
-router.patch('/me', updateMyProfile);
-router.delete('/me', deleteMyAccount);
+router.get('/nickname/check', checkNickname);
+router.post('/onboarding', authenticateToken, onboarding);
+router.get('/me', authenticateToken, getMyProfile);
+router.patch('/me', authenticateToken, updateMyProfile);
 
 export default router;

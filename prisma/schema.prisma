@@ -8,85 +8,120 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String?
-  nickname       String
-  profileImg     String?
-  provider       String         @default("local")
-  providerId     String?
-  refreshToken   String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  collections    Collection[]
-  routeHistories RouteHistory[]
+  id              String           @id @default(uuid())
+  kakaoId         String           @unique @map("kakao_id")
+  nickname        String           @unique
+  profileImageUrl String?          @map("profile_image_url")
+  isOnboarded     Boolean          @default(false) @map("is_onboarded")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  collections     UserCollection[]
+  savedRoutes     UserRoute[]
+
+  @@map("users")
 }
 
 model King {
-  id           Int          @id @default(autoincrement())
-  name         String
-  orderNum     Int          @unique
-  era          String
-  description  String       @db.Text
-  imageUrl     String?
-  cardImageUrl String?
-  spots        Spot[]
-  collections  Collection[]
+  id               Int              @id
+  name             String
+  orderNumber      Int              @map("order_number")
+  shortDescription String?          @db.Text @map("short_description")
+  description      String?          @db.Text
+  imageUrl         String?          @map("image_url")
+  tags             KingTag[]
+  kingSpots        KingSpot[]
+  routes           Route[]
+  collections      UserCollection[]
+
+  @@map("kings")
 }
 
-model Spot {
-  id          Int         @id @default(autoincrement())
-  name        String
-  description String      @db.Text
-  latitude    Float
-  longitude   Float
-  address     String?
-  imageUrl    String?
-  kingId      Int
-  king        King        @relation(fields: [kingId], references: [id])
-  routeSpots  RouteSpot[]
-  createdAt   DateTime    @default(now())
+model KingTag {
+  id     Int    @id @default(autoincrement())
+  kingId Int    @map("king_id")
+  tag    String
+  king   King   @relation(fields: [kingId], references: [id])
+
+  @@map("king_tags")
 }
 
-model Collection {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  kingId      Int
-  collectedAt DateTime @default(now())
+model KingSpot {
+  id     Int  @id @default(autoincrement())
+  kingId Int  @map("king_id")
+  spotId Int  @map("spot_id")
+  king   King @relation(fields: [kingId], references: [id])
+  spot   Spot @relation(fields: [spotId], references: [id])
+
+  @@map("king_spots")
+}
+
+model UserCollection {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  kingId      Int      @map("king_id")
+  collectedAt DateTime @default(now()) @map("collected_at")
   user        User     @relation(fields: [userId], references: [id])
   king        King     @relation(fields: [kingId], references: [id])
 
   @@unique([userId, kingId])
+  @@map("user_collections")
+}
+
+model Spot {
+  id           Int         @id @default(autoincrement())
+  contentId    String?     @map("content_id")
+  name         String
+  areaCode     Int?        @map("area_code")
+  sigunguCode  Int?        @map("sigungu_code")
+  address      String?     @db.Text
+  latitude     Float?
+  longitude    Float?
+  imageUrl     String?     @map("image_url")
+  openingHours String?     @map("opening_hours")
+  closedDays   String?     @map("closed_days")
+  admissionFee String?     @map("admission_fee")
+  description  String?     @db.Text
+  createdAt    DateTime    @default(now()) @map("created_at")
+  kingSpots    KingSpot[]
+  routeSpots   RouteSpot[]
+
+  @@map("spots")
 }
 
 model Route {
-  id             Int            @id @default(autoincrement())
-  name           String
-  description    String         @db.Text
-  imageUrl       String?
-  distance       Float?
-  duration       Int?
-  routeSpots     RouteSpot[]
-  routeHistories RouteHistory[]
-  createdAt      DateTime       @default(now())
+  id               Int         @id @default(autoincrement())
+  kingId           Int         @map("king_id")
+  name             String
+  tag              String?
+  estimatedMinutes Int?        @map("estimated_minutes")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  king             King        @relation(fields: [kingId], references: [id])
+  routeSpots       RouteSpot[]
+  savedBy          UserRoute[]
+
+  @@map("routes")
 }
 
 model RouteSpot {
-  id      Int   @id @default(autoincrement())
-  routeId Int
-  spotId  Int
-  order   Int
-  route   Route @relation(fields: [routeId], references: [id])
-  spot    Spot  @relation(fields: [spotId], references: [id])
+  id          Int   @id @default(autoincrement())
+  routeId     Int   @map("route_id")
+  spotId      Int   @map("spot_id")
+  orderNumber Int   @map("order_number")
+  route       Route @relation(fields: [routeId], references: [id])
+  spot        Spot  @relation(fields: [spotId], references: [id])
 
   @@unique([routeId, spotId])
+  @@map("route_spots")
 }
 
-model RouteHistory {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  routeId     Int
-  completedAt DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
-  route       Route    @relation(fields: [routeId], references: [id])
+model UserRoute {
+  id      String   @id @default(uuid())
+  userId  String   @map("user_id")
+  routeId Int      @map("route_id")
+  savedAt DateTime @default(now()) @map("saved_at")
+  user    User     @relation(fields: [userId], references: [id])
+  route   Route    @relation(fields: [routeId], references: [id])
+
+  @@unique([userId, routeId])
+  @@map("user_routes")
 }
