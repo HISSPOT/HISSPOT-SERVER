@@ -2,7 +2,7 @@ import { getAllKingsService, getKingByIdService } from '../services/king.service
 
 export const getAllKings = async (req, res, next) => {
   try {
-    const result = await getAllKingsService();
+    const result = await getAllKingsService(req.user.id);
     res.status(200).json({ success: true, data: result });
   } catch (err) {
     next(err);

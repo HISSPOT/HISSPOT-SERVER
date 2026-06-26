@@ -1,6 +1,8 @@
-import { findNearbySpots, findSpotById } from '../repositories/spot.repository.js';
+import { findSpotsByKingId, findSpotById } from '../repositories/spot.repository.js';
+import axios from 'axios';
 
-// Haversine 공식으로 두 좌표 간 거리(km) 계산
+const COLLECT_RADIUS_KM = 0.3;
+
 const haversineDistance = (lat1, lng1, lat2, lng2) => {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -11,16 +13,40 @@ const haversineDistance = (lat1, lng1, lat2, lng2) => {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-export const getNearbySpotService = async (lat, lng, radiusKm) => {
-  const spots = await findNearbySpots(lat, lng, radiusKm);
-  return spots.map((spot) => ({
-    ...spot,
-    distance: haversineDistance(lat, lng, spot.latitude, spot.longitude),
+export const getSpotsByKingService = async (kingId) => {
+  if (!kingId) throw Object.assign(new Error('kingId가 필요합니다.'), { status: 400 });
+  return await findSpotsByKingId(kingId);
+};
+
+export const getNearbySpotService = async (spotId) => {
+  const spot = await findSpotById(spotId);
+  if (!spot) throw Object.assign(new Error('해당 장소를 찾을 수 없습니다.'), { status: 404 });
+
+  const response = await axios.get('https://apis.data.go.kr/B551011/DataLabService/areaBasedList1', {
+    params: {
+      serviceKey: process.env.TOUR_API_KEY,
+      areaCode: spot.areaCode,
+      sigunguCode: spot.sigunguCode,
+      MobileOS: 'ETC',
+      MobileApp: 'Hisspot',
+      _type: 'json',
+      numOfRows: 5,
+    }
+  });
+
+  const items = response.data?.response?.body?.items?.item ?? [];
+  return items.map((item) => ({
+    name: item.title,
+    address: item.addr1,
+    imageUrl: item.firstimage,
   }));
 };
 
-export const getSpotByIdService = async (spotId) => {
+export const checkDistanceService = async (spotId, userLat, userLng) => {
   const spot = await findSpotById(spotId);
   if (!spot) throw Object.assign(new Error('해당 장소를 찾을 수 없습니다.'), { status: 404 });
-  return spot;
+  if (spot.latitude == null || spot.longitude == null)
+    throw Object.assign(new Error('해당 장소에 좌표 정보가 없습니다.'), { status: 400 });
+  const distance = haversineDistance(userLat, userLng, spot.latitude, spot.longitude);
+  return { isCollectable: distance <= COLLECT_RADIUS_KM, distance: Math.round(distance * 1000) / 1000 };
 };

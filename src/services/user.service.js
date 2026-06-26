@@ -1,18 +1,32 @@
-import { findUserById, updateUser, deleteUser } from '../repositories/user.repository.js';
+import { findUserById, findUserByNickname, updateUser } from '../repositories/user.repository.js';
+
+export const checkNicknameService = async (nickname) => {
+  if (!nickname) throw Object.assign(new Error('nickname이 필요합니다.'), { status: 400 });
+  const user = await findUserByNickname(nickname);
+  return !!user;
+};
+
+export const onboardingService = async (userId, { nickname, profileImageUrl }) => {
+  if (!nickname) throw Object.assign(new Error('nickname이 필요합니다.'), { status: 400 });
+
+  const duplicate = await findUserByNickname(nickname);
+  if (duplicate && duplicate.id !== userId) throw Object.assign(new Error('이미 사용 중인 닉네임입니다.'), { status: 409 });
+
+  const updated = await updateUser(userId, { nickname, profileImageUrl, isOnboarded: true });
+  const { kakaoId, ...safeUser } = updated;
+  return safeUser;
+};
 
 export const getMyProfileService = async (userId) => {
   const user = await findUserById(userId);
   if (!user) throw Object.assign(new Error('사용자를 찾을 수 없습니다.'), { status: 404 });
-  const { password, refreshToken, ...safeUser } = user;
+  const { kakaoId, ...safeUser } = user;
   return safeUser;
 };
 
 export const updateMyProfileService = async (userId, data) => {
-  const updated = await updateUser(userId, data);
-  const { password, refreshToken, ...safeUser } = updated;
+  const { nickname, profileImageUrl } = data;
+  const updated = await updateUser(userId, { nickname, profileImageUrl });
+  const { kakaoId, ...safeUser } = updated;
   return safeUser;
-};
-
-export const deleteMyAccountService = async (userId) => {
-  await deleteUser(userId);
 };

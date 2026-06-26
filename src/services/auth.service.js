@@ -1,59 +1,35 @@
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { findUserByEmail, createUser, updateRefreshToken, clearRefreshToken } from '../repositories/user.repository.js';
+import { findUserByKakaoId, createUser } from '../repositories/user.repository.js';
 
-const generateTokens = (userId) => {
-  const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_ACCESS_EXPIRES || '1h',
+const KAKAO_USER_INFO_URL = 'https://kapi.kakao.com/v2/user/me';
+
+const fetchKakaoUser = async (kakaoAccessToken) => {
+  const res = await fetch(KAKAO_USER_INFO_URL, {
+    headers: { Authorization: `Bearer ${kakaoAccessToken}` },
   });
-  const refreshToken = jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES || '14d',
-  });
-  return { accessToken, refreshToken };
+  if (!res.ok) throw Object.assign(new Error('카카오 토큰이 유효하지 않습니다.'), { status: 401 });
+  return res.json();
 };
 
-export const signUpService = async ({ email, password, nickname }) => {
-  const existing = await findUserByEmail(email);
-  if (existing) throw Object.assign(new Error('이미 사용 중인 이메일입니다.'), { status: 409 });
+export const kakaoLoginService = async (kakaoAccessToken) => {
+  if (!kakaoAccessToken) throw Object.assign(new Error('kakaoAccessToken이 필요합니다.'), { status: 400 });
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await createUser({ email, password: hashedPassword, nickname });
+  const kakaoUser = await fetchKakaoUser(kakaoAccessToken);
+  const kakaoId = String(kakaoUser.id);
+  const profileImageUrl = kakaoUser.kakao_account?.profile?.profile_image_url ?? null;
 
-  const { accessToken, refreshToken } = generateTokens(user.id);
-  await updateRefreshToken(user.id, refreshToken);
-
-  return { accessToken, refreshToken, userId: user.id, nickname: user.nickname };
-};
-
-export const signInService = async ({ email, password }) => {
-  const user = await findUserByEmail(email);
-  if (!user) throw Object.assign(new Error('이메일 또는 비밀번호가 올바르지 않습니다.'), { status: 401 });
-
-  const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) throw Object.assign(new Error('이메일 또는 비밀번호가 올바르지 않습니다.'), { status: 401 });
-
-  const { accessToken, refreshToken } = generateTokens(user.id);
-  await updateRefreshToken(user.id, refreshToken);
-
-  return { accessToken, refreshToken, userId: user.id, nickname: user.nickname };
-};
-
-export const reissueTokenService = async (refreshToken) => {
-  if (!refreshToken) throw Object.assign(new Error('리프레시 토큰이 필요합니다.'), { status: 400 });
-
-  let decoded;
-  try {
-    decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-  } catch {
-    throw Object.assign(new Error('유효하지 않은 리프레시 토큰입니다.'), { status: 401 });
+  let user = await findUserByKakaoId(kakaoId);
+  if (!user) {
+    user = await createUser({ kakaoId, nickname: `user_${kakaoId.slice(-6)}`, profileImageUrl });
   }
 
-  const { accessToken, refreshToken: newRefreshToken } = generateTokens(decoded.id);
-  await updateRefreshToken(decoded.id, newRefreshToken);
+  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_ACCESS_EXPIRES || '1h',
+  });
 
-  return { accessToken, refreshToken: newRefreshToken };
+  return { accessToken, isOnboarded: user.isOnboarded };
 };
 
-export const signOutService = async (userId) => {
-  await clearRefreshToken(userId);
+export const logoutService = async (userId) => {
+  // 추후 토큰 블랙리스트 처리 가능
 };

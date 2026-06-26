@@ -1,19 +1,30 @@
 import prisma from '../config/prisma.js';
 
-export const findAllRoutes = () =>
-  prisma.route.findMany({
-    include: { routeSpots: { include: { spot: true }, orderBy: { order: 'asc' } } },
-    orderBy: { createdAt: 'desc' },
-  });
+const routeInclude = {
+  routeSpots: {
+    include: { spot: true },
+    orderBy: { orderNumber: 'asc' },
+  },
+};
+
+export const findRoutesByKingId = (kingId) =>
+  prisma.route.findMany({ where: { kingId }, include: routeInclude });
 
 export const findRouteById = (id) =>
-  prisma.route.findUnique({
-    where: { id },
-    include: { routeSpots: { include: { spot: { include: { king: true } } }, orderBy: { order: 'asc' } } },
+  prisma.route.findUnique({ where: { id }, include: routeInclude });
+
+export const findSavedRoutesByUserId = (userId) =>
+  prisma.userRoute.findMany({
+    where: { userId },
+    include: { route: { include: routeInclude } },
+    orderBy: { savedAt: 'desc' },
   });
 
-export const findRouteHistoryByUserAndRoute = (userId, routeId) =>
-  prisma.routeHistory.findFirst({ where: { userId, routeId } });
+export const findUserRoute = (userId, routeId) =>
+  prisma.userRoute.findUnique({ where: { userId_routeId: { userId, routeId } } });
 
-export const createRouteHistory = (userId, routeId) =>
-  prisma.routeHistory.create({ data: { userId, routeId } });
+export const createUserRoute = (userId, routeId) =>
+  prisma.userRoute.create({ data: { userId, routeId } });
+
+export const deleteUserRoute = (userId, routeId) =>
+  prisma.userRoute.delete({ where: { userId_routeId: { userId, routeId } } });
