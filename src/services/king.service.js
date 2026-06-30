@@ -1,7 +1,7 @@
 import { findAllKings, findKingById } from '../repositories/king.repository.js';
 import { findCollectionsByUserId } from '../repositories/collection.repository.js';
 
-const getKingImageUrl = (king) => {
+export const getKingImageUrl = (king) => {
   if (king.imageUrl) return king.imageUrl;
   const padded = String(king.orderNumber).padStart(2, '0');
   return `/images/kings/character_js_king_${padded}.png`;
@@ -11,9 +11,10 @@ export const getAllKingsService = async (userId) => {
   const [kings, collections] = await Promise.all([findAllKings(), findCollectionsByUserId(userId)]);
   const collectedKingIds = new Set(collections.map((c) => c.kingId));
   const mapped = kings.map((k) => ({
-    ...k,
+    id: k.id,
+    name: k.name,
+    orderNumber: k.orderNumber,
     imageUrl: getKingImageUrl(k),
-    tags: k.tags ? [k.tags.tag1, k.tags.tag2, k.tags.tag3, k.tags.tag4, k.tags.tag5, k.tags.tag6].filter(Boolean) : [],
     isCollected: collectedKingIds.has(k.id),
   }));
   const collectionRate = Math.round((collectedKingIds.size / kings.length) * 100);
