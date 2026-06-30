@@ -269,6 +269,18 @@ const spots = [
 ];
 
 async function main() {
+  await prisma.user.upsert({
+    where: { id: 'admin-user-001' },
+    update: {},
+    create: {
+      id: 'admin-user-001',
+      kakaoId: 'admin-kakao-001',
+      nickname: 'admin',
+      isOnboarded: true,
+    },
+  });
+  console.log('✅ 관리자 계정 생성 완료 (id: admin-user-001)');
+
   for (const king of kings) {
     await prisma.king.upsert({
       where: { id: king.id },
