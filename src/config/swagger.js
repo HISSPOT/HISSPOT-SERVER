@@ -52,7 +52,6 @@ export const swaggerSpec = {
           imageUrl: { type: 'string', nullable: true },
           openingHours: { type: 'string', nullable: true },
           closedDays: { type: 'string', nullable: true },
-          admissionFee: { type: 'string', nullable: true },
           description: { type: 'string', nullable: true },
         },
       },

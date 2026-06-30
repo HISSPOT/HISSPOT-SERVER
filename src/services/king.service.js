@@ -1,7 +1,5 @@
 import { findAllKings, findKingById } from '../repositories/king.repository.js';
 import { findCollectionsByUserId } from '../repositories/collection.repository.js';
-import { findSpotsByKingId } from '../repositories/spot.repository.js';
-import { getNearbyTouristSpots } from './tour.service.js';
 
 export const getKingImageUrl = (king) => {
   if (king.imageUrl) return king.imageUrl;
@@ -24,13 +22,8 @@ export const getAllKingsService = async (userId) => {
 };
 
 export const getKingByIdService = async (kingId) => {
-  const [king, spots] = await Promise.all([findKingById(kingId), findSpotsByKingId(kingId)]);
+  const king = await findKingById(kingId);
   if (!king) throw Object.assign(new Error('해당 왕을 찾을 수 없습니다.'), { status: 404 });
-
   const tags = king.tags ? [king.tags.tag1, king.tags.tag2, king.tags.tag3, king.tags.tag4, king.tags.tag5, king.tags.tag6].filter(Boolean) : [];
-
-  const firstSpot = spots.find((s) => s.areaCode && s.sigunguCode);
-  const nearbySpots = firstSpot ? await getNearbyTouristSpots(firstSpot.areaCode, firstSpot.sigunguCode) : [];
-
-  return { ...king, imageUrl: getKingImageUrl(king), tags, nearbySpots };
+  return { ...king, imageUrl: getKingImageUrl(king), tags };
 };

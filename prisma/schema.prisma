@@ -83,7 +83,6 @@ model Spot {
   imageUrl     String?     @map("image_url")
   openingHours String?     @map("opening_hours")
   closedDays   String?     @map("closed_days")
-  admissionFee String?     @map("admission_fee")
   description  String?     @db.Text
   createdAt    DateTime    @default(now()) @map("created_at")
   kingSpots    KingSpot[]
