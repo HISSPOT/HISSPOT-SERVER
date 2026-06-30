@@ -17,7 +17,7 @@ export const getAllKingsService = async (userId) => {
     imageUrl: getKingImageUrl(k),
     isCollected: collectedKingIds.has(k.id),
   }));
-  const collectionRate = Math.round((collectedKingIds.size / kings.length) * 100);
+  const collectionRate = Math.floor((collectedKingIds.size / kings.length) * 100);
   return { kings: mapped, collectionRate };
 };
 
