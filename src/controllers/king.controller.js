@@ -12,7 +12,7 @@ export const getAllKings = async (req, res, next) => {
 
 export const getKingById = async (req, res, next) => {
   try {
-    const result = await getKingByIdService(Number(req.params.kingId));
+    const result = await getKingByIdService(Number(req.params.kingId), req.user.id);
     success(res, result);
   } catch (err) {
     next(err);
