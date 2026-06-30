@@ -28,7 +28,7 @@ model King {
   shortDescription String?          @db.Text @map("short_description")
   description      String?          @db.Text
   imageUrl         String?          @map("image_url")
-  tags             KingTag[]
+  tags             KingTag?
   kingSpots        KingSpot[]
   routes           Route[]
   collections      UserCollection[]
@@ -37,10 +37,14 @@ model King {
 }
 
 model KingTag {
-  id     Int    @id @default(autoincrement())
-  kingId Int    @map("king_id")
-  tag    String
-  king   King   @relation(fields: [kingId], references: [id])
+  kingId Int     @id @map("king_id")
+  tag1   String? @map("tag_1")
+  tag2   String? @map("tag_2")
+  tag3   String? @map("tag_3")
+  tag4   String? @map("tag_4")
+  tag5   String? @map("tag_5")
+  tag6   String? @map("tag_6")
+  king   King    @relation(fields: [kingId], references: [id])
 
   @@map("king_tags")
 }

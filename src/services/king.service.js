@@ -6,7 +6,7 @@ export const getAllKingsService = async (userId) => {
   const collectedKingIds = new Set(collections.map((c) => c.kingId));
   const mapped = kings.map((k) => ({
     ...k,
-    tags: k.tags.map((t) => t.tag),
+    tags: k.tags ? [k.tags.tag1, k.tags.tag2, k.tags.tag3, k.tags.tag4, k.tags.tag5, k.tags.tag6].filter(Boolean) : [],
     isCollected: collectedKingIds.has(k.id),
   }));
   const collectionRate = Math.round((collectedKingIds.size / kings.length) * 100);
@@ -16,5 +16,6 @@ export const getAllKingsService = async (userId) => {
 export const getKingByIdService = async (kingId) => {
   const king = await findKingById(kingId);
   if (!king) throw Object.assign(new Error('해당 왕을 찾을 수 없습니다.'), { status: 404 });
-  return { ...king, tags: king.tags.map((t) => t.tag) };
+  const tags = king.tags ? [king.tags.tag1, king.tags.tag2, king.tags.tag3, king.tags.tag4, king.tags.tag5, king.tags.tag6].filter(Boolean) : [];
+  return { ...king, tags };
 };

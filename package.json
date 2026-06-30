@@ -4,6 +4,9 @@
   "description": "Hisspot - 조선 왕 GPS 기반 수집 & 역사 여행 루트 추천 서버",
   "main": "app.js",
   "type": "module",
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",

@@ -1,10 +1,11 @@
 import { kakaoLoginService, logoutService } from '../services/auth.service.js';
+import { success } from '../utils/response.js';
 
 export const kakaoLogin = async (req, res, next) => {
   try {
     const { kakaoAccessToken } = req.body;
     const result = await kakaoLoginService(kakaoAccessToken);
-    res.status(200).json({ success: true, data: result });
+    success(res, result);
   } catch (err) {
     next(err);
   }
@@ -35,7 +36,7 @@ export const devLogin = async (req, res, next) => {
       });
     }
     const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-    res.status(200).json({ success: true, data: { accessToken, isOnboarded: user.isOnboarded } });
+    success(res, { accessToken, isOnboarded: user.isOnboarded });
   } catch (err) {
     next(err);
   }

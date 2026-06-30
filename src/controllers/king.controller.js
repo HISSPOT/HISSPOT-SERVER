@@ -1,9 +1,10 @@
 import { getAllKingsService, getKingByIdService } from '../services/king.service.js';
+import { success } from '../utils/response.js';
 
 export const getAllKings = async (req, res, next) => {
   try {
     const result = await getAllKingsService(req.user.id);
-    res.status(200).json({ success: true, data: result });
+    success(res, result);
   } catch (err) {
     next(err);
   }
@@ -12,7 +13,7 @@ export const getAllKings = async (req, res, next) => {
 export const getKingById = async (req, res, next) => {
   try {
     const result = await getKingByIdService(Number(req.params.kingId));
-    res.status(200).json({ success: true, data: result });
+    success(res, result);
   } catch (err) {
     next(err);
   }
