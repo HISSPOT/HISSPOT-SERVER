@@ -292,7 +292,18 @@ export const swaggerSpec = {
                     data: {
                       type: 'object',
                       properties: {
-                        kings: { type: 'array', items: { $ref: '#/components/schemas/King' } },
+                        kings: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'integer' },
+                              name: { type: 'string' },
+                              orderNumber: { type: 'integer' },
+                              imageUrl: { type: 'string' },
+                            },
+                          },
+                        },
                         collectionRate: { type: 'number', description: '수집률 (0~100)', example: 11 },
                       },
                     },
