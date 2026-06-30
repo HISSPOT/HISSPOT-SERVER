@@ -59,9 +59,12 @@ const main = async () => {
 
   for (const spot of spots) {
     try {
-      const intro = await fetchSpotIntro(spot.contentId);
+      const [detail, intro] = await Promise.all([
+        fetchSpotDetail(spot.contentId),
+        fetchSpotIntro(spot.contentId),
+      ]);
 
-      if (!intro) {
+      if (!detail && !intro) {
         console.log(`[SKIP] spotId=${spot.id} contentId=${spot.contentId} - 데이터 없음`);
         continue;
       }
@@ -69,6 +72,12 @@ const main = async () => {
       await prisma.spot.update({
         where: { id: spot.id },
         data: {
+          address: detail?.addr1 || null,
+          latitude: detail?.mapy ? parseFloat(detail.mapy) : null,
+          longitude: detail?.mapx ? parseFloat(detail.mapx) : null,
+          imageUrl: detail?.firstimage || detail?.firstimage2 || null,
+          openingHours: intro?.usetime || null,
+          closedDays: intro?.restdate || null,
         },
       });
 
