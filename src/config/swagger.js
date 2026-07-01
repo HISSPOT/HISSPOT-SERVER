@@ -306,6 +306,7 @@ export const swaggerSpec = {
                               name: { type: 'string' },
                               orderNumber: { type: 'integer' },
                               imageUrl: { type: 'string' },
+                              isCollected: { type: 'boolean', description: '내 수집 여부' },
                             },
                           },
                         },
