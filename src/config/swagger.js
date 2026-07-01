@@ -240,7 +240,7 @@ export const swaggerSpec = {
         },
         responses: {
           200: { description: '온보딩 완료', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/User' } } } } } },
-          401: { description: '인증 실패' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -250,7 +250,7 @@ export const swaggerSpec = {
         summary: '내 프로필 조회',
         responses: {
           200: { description: '프로필 조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/User' } } } } } },
-          401: { description: '인증 실패' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
       patch: {
@@ -271,7 +271,7 @@ export const swaggerSpec = {
         },
         responses: {
           200: { description: '수정 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/User' } } } } } },
-          401: { description: '인증 실패' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -358,9 +358,9 @@ export const swaggerSpec = {
               },
             },
           },
-          401: { description: '인증 실패' },
-          404: { description: '왕을 찾을 수 없음' },
-          409: { description: '이미 수집한 왕' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          404: { description: '왕을 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          409: { description: '이미 수집한 왕', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -385,7 +385,7 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/NearbySpot' } } } } } } },
-          404: { description: '장소를 찾을 수 없음' },
+          404: { description: '장소를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -432,7 +432,7 @@ export const swaggerSpec = {
               },
             },
           },
-          404: { description: '장소를 찾을 수 없음' },
+          404: { description: '장소를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -454,7 +454,7 @@ export const swaggerSpec = {
         summary: '저장한 루트 목록 조회',
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Route' } } } } } } },
-          401: { description: '인증 실패' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -467,9 +467,9 @@ export const swaggerSpec = {
         ],
         responses: {
           201: { description: '저장 성공' },
-          401: { description: '인증 실패' },
-          404: { description: '루트를 찾을 수 없음' },
-          409: { description: '이미 저장한 루트' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          404: { description: '루트를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          409: { description: '이미 저장한 루트', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
       delete: {
@@ -480,8 +480,8 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '취소 성공' },
-          401: { description: '인증 실패' },
-          404: { description: '저장된 루트를 찾을 수 없음' },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          404: { description: '저장된 루트를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -494,7 +494,7 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/Route' } } } } } },
-          404: { description: '루트를 찾을 수 없음' },
+          404: { description: '루트를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
