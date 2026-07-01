@@ -59,15 +59,18 @@ const fetchSpotIntro = (contentId) =>
     pageNo: 1,
   });
 
+const LIMIT = process.argv[2] ? parseInt(process.argv[2], 10) : undefined;
+
 const main = async () => {
   await prisma.spot.update({ where: { id: 140 }, data: { contentId: '128871' } });
   await prisma.spot.update({ where: { id: 183 }, data: { contentId: '2765510' } });
 
   const spots = await prisma.spot.findMany({
     where: { contentId: { not: null }, address: null },
+    ...(LIMIT ? { take: LIMIT } : {}),
   });
 
-  console.log(`총 ${spots.length}개 spot 업데이트 시작 (이미 채워진 항목 제외)`);
+  console.log(`총 ${spots.length}개 spot 업데이트 시작 (이미 채워진 항목 제외${LIMIT ? `, LIMIT=${LIMIT}` : ''})`);
 
   for (const spot of spots) {
     try {
