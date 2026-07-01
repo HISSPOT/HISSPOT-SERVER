@@ -134,6 +134,8 @@ export const swaggerSpec = {
               },
             },
           },
+          400: { description: 'kakaoAccessToken 누락', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          401: { description: '카카오 토큰이 유효하지 않음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -216,6 +218,7 @@ export const swaggerSpec = {
               },
             },
           },
+          400: { description: 'nickname 누락', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -240,7 +243,9 @@ export const swaggerSpec = {
         },
         responses: {
           200: { description: '온보딩 완료', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/User' } } } } } },
+          400: { description: 'nickname 누락', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          409: { description: '이미 사용 중인 닉네임', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -251,6 +256,7 @@ export const swaggerSpec = {
         responses: {
           200: { description: '프로필 조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/User' } } } } } },
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          404: { description: '사용자를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
       patch: {
@@ -373,6 +379,8 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Spot' } } } } } } },
+          400: { description: 'kingId 누락', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -385,6 +393,7 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/NearbySpot' } } } } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           404: { description: '장소를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
@@ -432,6 +441,8 @@ export const swaggerSpec = {
               },
             },
           },
+          400: { description: '좌표 정보 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           404: { description: '장소를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
@@ -445,6 +456,8 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Route' } } } } } } },
+          400: { description: 'kingId 누락', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
     },
@@ -494,6 +507,7 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { $ref: '#/components/schemas/Route' } } } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           404: { description: '루트를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
