@@ -9,6 +9,11 @@ export const findSpotsByKingId = (kingId) =>
     }
   });
 
+export const findAllSpots = () =>
+  prisma.spot.findMany({
+    include: { kingSpots: { select: { kingId: true } } }
+  });
+
 export const findKingSpotByKingId = (kingId) =>
   prisma.kingSpot.findMany({
     where: { kingId },

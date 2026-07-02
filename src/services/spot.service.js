@@ -1,4 +1,5 @@
-import { findSpotsByKingId, findSpotById } from '../repositories/spot.repository.js';
+import { findSpotsByKingId, findSpotById, findAllSpots } from '../repositories/spot.repository.js';
+import { findCollectionsByUserId } from '../repositories/collection.repository.js';
 import axios from 'axios';
 
 const COLLECT_RADIUS_KM = 0.3;
@@ -16,6 +17,15 @@ const haversineDistance = (lat1, lng1, lat2, lng2) => {
 export const getSpotsByKingService = async (kingId) => {
   if (!kingId) throw Object.assign(new Error('kingId가 필요합니다.'), { status: 400 });
   return await findSpotsByKingId(kingId);
+};
+
+export const getAllSpotsService = async (userId) => {
+  const [spots, collections] = await Promise.all([findAllSpots(), findCollectionsByUserId(userId)]);
+  const collectedKingIds = new Set(collections.map((c) => c.kingId));
+  return spots.map(({ kingSpots, ...spot }) => {
+    const kingId = kingSpots[0]?.kingId ?? null;
+    return { ...spot, kingId, isCollected: kingId != null && collectedKingIds.has(kingId) };
+  });
 };
 
 export const getNearbySpotService = async (spotId) => {

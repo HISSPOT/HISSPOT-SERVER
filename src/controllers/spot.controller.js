@@ -1,9 +1,11 @@
-import { getSpotsByKingService, getNearbySpotService, checkDistanceService } from '../services/spot.service.js';
+import { getSpotsByKingService, getAllSpotsService, getNearbySpotService, checkDistanceService } from '../services/spot.service.js';
 import { success } from '../utils/response.js';
 
 export const getSpotsByKing = async (req, res, next) => {
   try {
-    const result = await getSpotsByKingService(Number(req.query.kingId));
+    const result = req.query.kingId
+      ? await getSpotsByKingService(Number(req.query.kingId))
+      : await getAllSpotsService(req.user.id);
     success(res, result);
   } catch (err) {
     next(err);
