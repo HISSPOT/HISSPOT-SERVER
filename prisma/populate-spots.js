@@ -40,11 +40,6 @@ const fetchSpotDetail = (contentId) =>
     _type: 'json',
     numOfRows: 1,
     pageNo: 1,
-    defaultYN: 'Y',
-    firstImageYN: 'Y',
-    addrinfoYN: 'Y',
-    mapinfoYN: 'Y',
-    overviewYN: 'N',
   });
 
 const fetchSpotIntro = (contentId) =>
