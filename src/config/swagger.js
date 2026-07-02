@@ -53,8 +53,16 @@ export const swaggerSpec = {
           openingHours: { type: 'string', nullable: true },
           closedDays: { type: 'string', nullable: true },
           description: { type: 'string', nullable: true },
-          kingId: { type: 'integer', nullable: true, description: 'GET /spots(전체 조회) 응답에만 포함' },
-          isCollected: { type: 'boolean', description: 'GET /spots(전체 조회) 응답에만 포함' },
+        },
+      },
+      SpotMapMarker: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          latitude: { type: 'number', nullable: true },
+          longitude: { type: 'number', nullable: true },
+          kingId: { type: 'integer' },
+          isCollected: { type: 'boolean' },
         },
       },
       NearbySpot: {
@@ -376,9 +384,9 @@ export const swaggerSpec = {
     '/spots': {
       get: {
         tags: ['Spots'],
-        summary: '왕 수집 장소 전체 조회 (지도용, 왕별 대표 장소 1개씩 + isCollected)',
+        summary: '왕 수집 장소 전체 조회 (지도 마커용, 왕별 대표 장소 1개씩)',
         responses: {
-          200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Spot' } } } } } } },
+          200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/SpotMapMarker' } } } } } } },
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },

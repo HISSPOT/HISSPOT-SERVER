@@ -23,7 +23,9 @@ export const getAllSpotsService = async (userId) => {
   const [kingSpots, collections] = await Promise.all([findAllKingSpots(), findCollectionsByUserId(userId)]);
   const collectedKingIds = new Set(collections.map((c) => c.kingId));
   return kingSpots.map(({ kingId, spot }) => ({
-    ...spot,
+    id: spot.id,
+    latitude: spot.latitude,
+    longitude: spot.longitude,
     kingId,
     isCollected: collectedKingIds.has(kingId),
   }));
