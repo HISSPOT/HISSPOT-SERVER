@@ -53,8 +53,8 @@ export const swaggerSpec = {
           openingHours: { type: 'string', nullable: true },
           closedDays: { type: 'string', nullable: true },
           description: { type: 'string', nullable: true },
-          kingId: { type: 'integer', nullable: true, description: '전체 조회(kingId 미지정) 시에만 포함' },
-          isCollected: { type: 'boolean', description: '전체 조회(kingId 미지정) 시에만 포함' },
+          kingId: { type: 'integer', nullable: true, description: 'GET /spots(전체 조회) 응답에만 포함' },
+          isCollected: { type: 'boolean', description: 'GET /spots(전체 조회) 응답에만 포함' },
         },
       },
       NearbySpot: {
@@ -376,12 +376,23 @@ export const swaggerSpec = {
     '/spots': {
       get: {
         tags: ['Spots'],
-        summary: '왕 수집 장소 조회 (kingId 미지정 시 전체 조회, 지도용 isCollected 포함)',
+        summary: '왕 수집 장소 전체 조회 (지도용, 왕별 대표 장소 1개씩 + isCollected)',
+        responses: {
+          200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Spot' } } } } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        },
+      },
+    },
+    '/spots/{kingId}': {
+      get: {
+        tags: ['Spots'],
+        summary: '특정 왕의 수집 장소 조회',
         parameters: [
-          { in: 'query', name: 'kingId', required: false, description: '지정 시 해당 왕의 장소만 조회, 미지정 시 전체 장소 조회', schema: { type: 'integer' } },
+          { in: 'path', name: 'kingId', required: true, schema: { type: 'integer' } },
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/Spot' } } } } } } },
+          400: { description: 'kingId 누락/유효하지 않음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },

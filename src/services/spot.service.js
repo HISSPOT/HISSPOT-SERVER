@@ -1,4 +1,4 @@
-import { findSpotsByKingId, findSpotById, findAllSpots } from '../repositories/spot.repository.js';
+import { findSpotsByKingId, findSpotById, findAllKingSpots } from '../repositories/spot.repository.js';
 import { findCollectionsByUserId } from '../repositories/collection.repository.js';
 import axios from 'axios';
 
@@ -20,12 +20,13 @@ export const getSpotsByKingService = async (kingId) => {
 };
 
 export const getAllSpotsService = async (userId) => {
-  const [spots, collections] = await Promise.all([findAllSpots(), findCollectionsByUserId(userId)]);
+  const [kingSpots, collections] = await Promise.all([findAllKingSpots(), findCollectionsByUserId(userId)]);
   const collectedKingIds = new Set(collections.map((c) => c.kingId));
-  return spots.map(({ kingSpots, ...spot }) => {
-    const kingId = kingSpots[0]?.kingId ?? null;
-    return { ...spot, kingId, isCollected: kingId != null && collectedKingIds.has(kingId) };
-  });
+  return kingSpots.map(({ kingId, spot }) => ({
+    ...spot,
+    kingId,
+    isCollected: collectedKingIds.has(kingId),
+  }));
 };
 
 export const getNearbySpotService = async (spotId) => {
