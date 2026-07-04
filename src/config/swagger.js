@@ -384,7 +384,7 @@ export const swaggerSpec = {
     '/spots': {
       get: {
         tags: ['Spots'],
-        summary: '왕 수집 장소 전체 조회 (지도 마커용, 왕별 대표 장소 1개씩)',
+        summary: '왕 수집 장소 전체 조회 (지도 마커용, 왕당 연결된 스팟 전부)',
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/SpotMapMarker' } } } } } } },
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },

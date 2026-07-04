@@ -11,7 +11,6 @@ export const findSpotsByKingId = (kingId) =>
 
 export const findAllKingSpots = () =>
   prisma.kingSpot.findMany({
-    distinct: ['kingId'],
     select: { kingId: true, spot: { select: { id: true, latitude: true, longitude: true } } },
     orderBy: { kingId: 'asc' }
   });
