@@ -2,7 +2,7 @@ import { findSpotsByKingId, findSpotById, findAllKingSpots } from '../repositori
 import { findCollectionsByUserId } from '../repositories/collection.repository.js';
 import axios from 'axios';
 
-const COLLECT_RADIUS_KM = 0.3;
+const COLLECT_RADIUS_KM = 0.05;
 
 const haversineDistance = (lat1, lng1, lat2, lng2) => {
   const R = 6371;
