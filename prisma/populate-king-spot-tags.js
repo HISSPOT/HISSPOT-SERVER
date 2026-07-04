@@ -40,21 +40,22 @@ const main = async () => {
       console.log(`[SKIP] king not found: ${kingName}`);
       continue;
     }
-    const kingSpot = await prisma.kingSpot.findFirst({ where: { kingId: king.id }, include: { spot: true } });
-    if (!kingSpot) {
+    const kingSpots = await prisma.kingSpot.findMany({ where: { kingId: king.id }, include: { spot: true } });
+    if (kingSpots.length === 0) {
       console.log(`[SKIP] kingSpot not found for ${kingName}`);
       continue;
     }
-    if (kingSpot.spot.name !== spotName) {
-      console.log(`[SKIP] name mismatch for ${kingName}: expected "${spotName}", got "${kingSpot.spot.name}"`);
+    if (kingSpots.length > 1) {
+      console.log(`[SKIP] ${kingName} has ${kingSpots.length} kingSpots, ambiguous — 수동으로 확인 필요 (예상: "${spotName}")`);
       continue;
     }
+    const kingSpot = kingSpots[0];
     await prisma.kingSpot.update({
       where: { id: kingSpot.id },
       data: { tag1: '조선시대', tag2, tag3, tag4 },
     });
     updated++;
-    console.log(`[OK] ${kingName} -> ${spotName}`);
+    console.log(`[OK] ${kingName} -> "${kingSpot.spot.name}" (예상: "${spotName}")`);
   }
   console.log(`완료: ${updated}/${TAG_DATA.length}`);
 };
