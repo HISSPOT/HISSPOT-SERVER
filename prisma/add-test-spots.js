@@ -4,18 +4,11 @@ const prisma = new PrismaClient();
 
 const NEW_SPOTS = [
   {
-    kingId: 3,
-    name: '왕십리문화공원',
-    address: '서울 성동구 왕십리로 310',
-    latitude: 37.5617309,
-    longitude: 127.0352696,
-  },
-  {
-    kingId: 10,
-    name: '포레스타호텔',
-    address: '서울 성동구 무학로2길 51',
-    latitude: 37.5624075,
-    longitude: 127.0352647,
+    kingId: 7,
+    name: '헤르츠카페',
+    address: 'Wangsimni, Seoul',
+    latitude: 37.568832,
+    longitude: 127.0252724,
   },
 ];
 
