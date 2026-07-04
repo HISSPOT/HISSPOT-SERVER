@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const TEST_SPOT_IDS = [208];
+const TEST_SPOT_IDS = [207];
 
 const main = async () => {
   const kingSpotResult = await prisma.kingSpot.deleteMany({ where: { spotId: { in: TEST_SPOT_IDS } } });
