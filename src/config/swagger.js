@@ -53,7 +53,7 @@ export const swaggerSpec = {
           openingHours: { type: 'string', nullable: true },
           closedDays: { type: 'string', nullable: true },
           description: { type: 'string', nullable: true },
-          tags: { type: 'array', items: { type: 'string' } },
+          tags: { type: 'array', items: { type: 'string' }, example: ['조선시대', '궁궐', '유네스코', '서울'] },
         },
       },
       SpotMapMarker: {
