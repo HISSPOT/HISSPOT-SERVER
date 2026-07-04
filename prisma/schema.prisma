@@ -50,11 +50,15 @@ model KingTag {
 }
 
 model KingSpot {
-  id     Int  @id @default(autoincrement())
-  kingId Int  @map("king_id")
-  spotId Int  @map("spot_id")
-  king   King @relation(fields: [kingId], references: [id])
-  spot   Spot @relation(fields: [spotId], references: [id])
+  id     Int     @id @default(autoincrement())
+  kingId Int     @map("king_id")
+  spotId Int     @map("spot_id")
+  tag1   String? @map("tag_1")
+  tag2   String? @map("tag_2")
+  tag3   String? @map("tag_3")
+  tag4   String? @map("tag_4")
+  king   King    @relation(fields: [kingId], references: [id])
+  spot   Spot    @relation(fields: [spotId], references: [id])
 
   @@map("king_spots")
 }

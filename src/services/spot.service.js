@@ -16,7 +16,11 @@ const haversineDistance = (lat1, lng1, lat2, lng2) => {
 
 export const getSpotsByKingService = async (kingId) => {
   if (!kingId) throw Object.assign(new Error('kingId가 필요합니다.'), { status: 400 });
-  return await findSpotsByKingId(kingId);
+  const kingSpots = await findSpotsByKingId(kingId);
+  return kingSpots.map(({ spot, tag1, tag2, tag3, tag4 }) => ({
+    ...spot,
+    tags: [tag1, tag2, tag3, tag4].filter(Boolean),
+  }));
 };
 
 export const getAllSpotsService = async (userId) => {

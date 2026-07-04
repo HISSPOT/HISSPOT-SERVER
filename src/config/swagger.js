@@ -53,6 +53,7 @@ export const swaggerSpec = {
           openingHours: { type: 'string', nullable: true },
           closedDays: { type: 'string', nullable: true },
           description: { type: 'string', nullable: true },
+          tags: { type: 'array', items: { type: 'string' } },
         },
       },
       SpotMapMarker: {
