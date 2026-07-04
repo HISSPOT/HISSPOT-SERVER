@@ -414,6 +414,7 @@ export const swaggerSpec = {
         ],
         responses: {
           200: { description: '조회 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean' }, data: { type: 'array', items: { $ref: '#/components/schemas/NearbySpot' } } } } } } },
+          400: { description: '해당 장소에 좌표 정보가 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
           404: { description: '장소를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },

@@ -31,33 +31,41 @@ export const getAllSpotsService = async (userId) => {
   }));
 };
 
+const NEARBY_RADIUS_M = 2000;
+
 export const getNearbySpotService = async (spotId) => {
   const spot = await findSpotById(spotId);
   if (!spot) throw Object.assign(new Error('해당 장소를 찾을 수 없습니다.'), { status: 404 });
+  if (spot.latitude == null || spot.longitude == null)
+    throw Object.assign(new Error('해당 장소에 좌표 정보가 없습니다.'), { status: 400 });
 
-  const response = await axios.get('https://apis.data.go.kr/B551011/TarRlteTarService1/areaBasedList1', {
+  const response = await axios.get('https://apis.data.go.kr/B551011/KorService2/locationBasedList2', {
     params: {
       serviceKey: process.env.TOUR_API_KEY,
-      areaCode: spot.areaCode,
-      sigunguCode: spot.sigunguCode,
+      mapX: spot.longitude,
+      mapY: spot.latitude,
+      radius: NEARBY_RADIUS_M,
       MobileOS: 'ETC',
       MobileApp: 'Hisspot',
       _type: 'json',
-      numOfRows: 3,
+      numOfRows: 4,
       pageNo: 1,
       contentTypeId: 12,
     }
   });
 
   const items = response.data?.response?.body?.items?.item ?? [];
-  return items.slice(0, 3).map((item) => ({
-    contentId: item.contentid,
-    name: item.title,
-    address: item.addr1,
-    imageUrl: item.firstimage || item.firstimage2 || null,
-    latitude: item.mapy,
-    longitude: item.mapx,
-  }));
+  return items
+    .filter((item) => item.contentid !== spot.contentId)
+    .slice(0, 3)
+    .map((item) => ({
+      contentId: item.contentid,
+      name: item.title,
+      address: item.addr1,
+      imageUrl: item.firstimage || item.firstimage2 || null,
+      latitude: item.mapy,
+      longitude: item.mapx,
+    }));
 };
 
 export const checkDistanceService = async (spotId, userLat, userLng) => {
