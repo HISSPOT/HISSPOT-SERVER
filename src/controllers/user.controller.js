@@ -1,4 +1,4 @@
-import { checkNicknameService, onboardingService, getMyProfileService, updateMyProfileService } from '../services/user.service.js';
+import { checkNicknameService, onboardingService, getMyProfileService, updateMyProfileService, deleteMyAccountService } from '../services/user.service.js';
 import { success } from '../utils/response.js';
 
 export const checkNickname = async (req, res, next) => {
@@ -33,6 +33,15 @@ export const updateMyProfile = async (req, res, next) => {
   try {
     const result = await updateMyProfileService(req.user.id, req.body);
     success(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteMyAccount = async (req, res, next) => {
+  try {
+    await deleteMyAccountService(req.user.id);
+    res.status(200).json({ success: true, message: '회원 탈퇴가 완료되었습니다.' });
   } catch (err) {
     next(err);
   }

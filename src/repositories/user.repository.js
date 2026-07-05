@@ -16,3 +16,10 @@ export const updateUser = (id, data) => {
   const filtered = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
   return prisma.user.update({ where: { id }, data: filtered });
 };
+
+export const deleteUser = (id) =>
+  prisma.$transaction([
+    prisma.userCollection.deleteMany({ where: { userId: id } }),
+    prisma.userRoute.deleteMany({ where: { userId: id } }),
+    prisma.user.delete({ where: { id } }),
+  ]);

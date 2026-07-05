@@ -292,6 +292,16 @@ export const swaggerSpec = {
           401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
         },
       },
+      delete: {
+        tags: ['Users'],
+        summary: '회원 탈퇴',
+        description: '수집 기록, 저장한 루트 등 연관 데이터를 모두 삭제하고 계정을 탈퇴합니다.',
+        responses: {
+          200: { description: '탈퇴 성공', content: { 'application/json': { schema: { type: 'object', properties: { success: { type: 'boolean', example: true }, message: { type: 'string', example: '회원 탈퇴가 완료되었습니다.' } } } } } },
+          401: { description: '인증 실패', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          404: { description: '사용자를 찾을 수 없음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        },
+      },
     },
     '/kings': {
       get: {

@@ -1,4 +1,4 @@
-import { findUserById, findUserByNickname, updateUser } from '../repositories/user.repository.js';
+import { findUserById, findUserByNickname, updateUser, deleteUser } from '../repositories/user.repository.js';
 
 export const checkNicknameService = async (nickname) => {
   if (!nickname) throw Object.assign(new Error('nickname이 필요합니다.'), { status: 400 });
@@ -29,4 +29,10 @@ export const updateMyProfileService = async (userId, data) => {
   const updated = await updateUser(userId, { nickname, profileImageUrl });
   const { kakaoId, ...safeUser } = updated;
   return safeUser;
+};
+
+export const deleteMyAccountService = async (userId) => {
+  const user = await findUserById(userId);
+  if (!user) throw Object.assign(new Error('사용자를 찾을 수 없습니다.'), { status: 404 });
+  await deleteUser(userId);
 };
