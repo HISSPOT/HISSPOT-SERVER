@@ -27,6 +27,13 @@ app.use('/api/v1', router);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  if (err.code === 'P2002') {
+    const field = err.meta?.target?.[0];
+    return res.status(409).json({
+      success: false,
+      message: field === 'nickname' ? '이미 사용 중인 닉네임입니다.' : '이미 사용 중인 값입니다.',
+    });
+  }
   res.status(err.status || 500).json({
     success: false,
     message: err.message || '서버 내부 오류가 발생했습니다.',

@@ -9,9 +9,6 @@ export const checkNicknameService = async (nickname) => {
 export const onboardingService = async (userId, { nickname, profileImageUrl }) => {
   if (!nickname) throw Object.assign(new Error('nickname이 필요합니다.'), { status: 400 });
 
-  const duplicate = await findUserByNickname(nickname);
-  if (duplicate && duplicate.id !== userId) throw Object.assign(new Error('이미 사용 중인 닉네임입니다.'), { status: 409 });
-
   const updated = await updateUser(userId, { nickname, profileImageUrl, isOnboarded: true });
   const { kakaoId, ...safeUser } = updated;
   return safeUser;
