@@ -20,7 +20,7 @@ export const kakaoLoginService = async (kakaoAccessToken) => {
 
   let user = await findUserByKakaoId(kakaoId);
   if (!user) {
-    user = await createUser({ kakaoId, nickname: `user_${kakaoId.slice(-6)}`, profileImageUrl });
+    user = await createUser({ kakaoId, provider: 'KAKAO', nickname: `user_${kakaoId.slice(-6)}`, profileImageUrl });
   }
 
   const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {

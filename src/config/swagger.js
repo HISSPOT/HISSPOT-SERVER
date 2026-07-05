@@ -21,6 +21,7 @@ export const swaggerSpec = {
           id: { type: 'string', format: 'uuid' },
           nickname: { type: 'string' },
           profileImageUrl: { type: 'string', nullable: true },
+          provider: { type: 'string', enum: ['KAKAO', 'APPLE'], description: '로그인 방식', example: 'KAKAO' },
           isOnboarded: { type: 'boolean' },
           createdAt: { type: 'string', format: 'date-time' },
         },

@@ -10,6 +10,7 @@ datasource db {
 model User {
   id              String           @id @default(uuid())
   kakaoId         String           @unique @map("kakao_id")
+  provider        AuthProvider     @default(KAKAO)
   nickname        String           @unique
   profileImageUrl String?          @map("profile_image_url")
   isOnboarded     Boolean          @default(false) @map("is_onboarded")
@@ -19,6 +20,11 @@ model User {
   savedRoutes     UserRoute[]
 
   @@map("users")
+}
+
+enum AuthProvider {
+  KAKAO
+  APPLE
 }
 
 model King {
