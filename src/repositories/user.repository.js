@@ -6,6 +6,9 @@ export const findUserById = (id) =>
 export const findUserByKakaoId = (kakaoId) =>
   prisma.user.findUnique({ where: { kakaoId } });
 
+export const findUserByAppleId = (appleId) =>
+  prisma.user.findUnique({ where: { appleId } });
+
 export const findUserByNickname = (nickname) =>
   prisma.user.findUnique({ where: { nickname } });
 

@@ -1,10 +1,20 @@
-import { kakaoLoginService, logoutService } from '../services/auth.service.js';
+import { kakaoLoginService, appleLoginService, logoutService } from '../services/auth.service.js';
 import { success } from '../utils/response.js';
 
 export const kakaoLogin = async (req, res, next) => {
   try {
     const { kakaoAccessToken } = req.body;
     const result = await kakaoLoginService(kakaoAccessToken);
+    success(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const appleLogin = async (req, res, next) => {
+  try {
+    const { appleIdentityToken } = req.body;
+    const result = await appleLoginService(appleIdentityToken);
     success(res, result);
   } catch (err) {
     next(err);

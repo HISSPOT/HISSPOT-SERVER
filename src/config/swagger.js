@@ -151,6 +151,51 @@ export const swaggerSpec = {
         },
       },
     },
+    '/auth/apple': {
+      post: {
+        tags: ['Auth'],
+        summary: '애플 로그인',
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['appleIdentityToken'],
+                properties: {
+                  appleIdentityToken: { type: 'string', description: 'Apple AuthenticationServices가 발급한 identityToken(JWT)' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: '로그인 성공',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                    data: {
+                      type: 'object',
+                      properties: {
+                        accessToken: { type: 'string' },
+                        isOnboarded: { type: 'boolean' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          400: { description: 'appleIdentityToken 누락', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+          401: { description: '애플 토큰이 유효하지 않음', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        },
+      },
+    },
     '/auth/logout': {
       post: {
         tags: ['Auth'],

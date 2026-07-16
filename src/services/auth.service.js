@@ -1,7 +1,23 @@
 import jwt from 'jsonwebtoken';
-import { findUserByKakaoId, createUser } from '../repositories/user.repository.js';
+import { jwtVerify, createRemoteJWKSet } from 'jose';
+import { findUserByKakaoId, findUserByAppleId, createUser } from '../repositories/user.repository.js';
 
 const KAKAO_USER_INFO_URL = 'https://kapi.kakao.com/v2/user/me';
+
+const APPLE_ISSUER = 'https://appleid.apple.com';
+const appleJwks = createRemoteJWKSet(new URL(`${APPLE_ISSUER}/auth/keys`));
+
+const verifyAppleIdentityToken = async (appleIdentityToken) => {
+  try {
+    const { payload } = await jwtVerify(appleIdentityToken, appleJwks, {
+      issuer: APPLE_ISSUER,
+      audience: process.env.APPLE_BUNDLE_ID,
+    });
+    return payload;
+  } catch {
+    throw Object.assign(new Error('애플 토큰이 유효하지 않습니다.'), { status: 401 });
+  }
+};
 
 const fetchKakaoUser = async (kakaoAccessToken) => {
   const res = await fetch(KAKAO_USER_INFO_URL, {
@@ -21,6 +37,24 @@ export const kakaoLoginService = async (kakaoAccessToken) => {
   let user = await findUserByKakaoId(kakaoId);
   if (!user) {
     user = await createUser({ kakaoId, provider: 'KAKAO', nickname: `user_${kakaoId.slice(-6)}`, profileImageUrl });
+  }
+
+  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_ACCESS_EXPIRES || '1h',
+  });
+
+  return { accessToken, isOnboarded: user.isOnboarded };
+};
+
+export const appleLoginService = async (appleIdentityToken) => {
+  if (!appleIdentityToken) throw Object.assign(new Error('appleIdentityToken이 필요합니다.'), { status: 400 });
+
+  const payload = await verifyAppleIdentityToken(appleIdentityToken);
+  const appleId = payload.sub;
+
+  let user = await findUserByAppleId(appleId);
+  if (!user) {
+    user = await createUser({ appleId, provider: 'APPLE', nickname: `user_${appleId.slice(-6)}` });
   }
 
   const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
